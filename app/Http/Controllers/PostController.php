@@ -166,6 +166,8 @@ class PostController extends Controller
         return back()->with('success', "Post {$action} successfully!");
     }
 
+    
+
    /**
      * Display trending posts page
      */
@@ -175,7 +177,7 @@ class PostController extends Controller
         $trendingPosts = Post::withCount('likes')
             ->with(['user', 'comments.user', 'likes', 'images'])
             ->having('likes_count', '>=', 3)
-            ->groupBy('posts.id') // Add this line to fix the HAVING clause error
+            ->groupBy('posts.id')
             ->orderBy('likes_count', 'desc')
             ->get();
         
@@ -193,7 +195,7 @@ class PostController extends Controller
                     $query->where('content', 'like', "%#{$category}%")
                           ->orWhere('content', 'like', "%#" . str_replace(' ', '', $category) . "%");
                 })
-                ->groupBy('posts.id') // Add this line to group the results properly
+                ->groupBy('posts.id') 
                 ->orderBy('likes_count', 'desc')
                 ->take(5)
                 ->get();

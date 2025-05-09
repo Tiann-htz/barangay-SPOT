@@ -88,7 +88,10 @@
                                             
                                             @if($announcement->image_path)
                                                 <div class="mt-3">
-                                                    <img src="{{ Storage::url($announcement->image_path) }}" alt="Announcement Image" class="max-w-full h-auto max-h-60 rounded">
+                                                    <img src="{{ Storage::url($announcement->image_path) }}" 
+                                                         alt="Announcement: {{ $announcement->title }}" 
+                                                         class="max-w-full h-auto max-h-60 rounded cursor-pointer announcement-image hover:opacity-90 transition"
+                                                         title="Click to enlarge">
                                                 </div>
                                             @endif
                                             
@@ -199,4 +202,70 @@
             </div>
         </div>
     </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="max-w-4xl w-full mx-4">
+            <div class="bg-white rounded-lg shadow-xl overflow-hidden">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h3 class="text-lg font-medium" id="modalTitle">Image Preview</h3>
+                    <button type="button" id="closeModal" class="text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <img id="modalImage" src="" alt="Announcement Image" class="max-w-full h-auto mx-auto">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all announcement images
+            const announcementImages = document.querySelectorAll('.announcement-image');
+            const imageModal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalTitle = document.getElementById('modalTitle');
+            const closeModal = document.getElementById('closeModal');
+            
+            // Add click event to each image
+            announcementImages.forEach(image => {
+                image.addEventListener('click', function() {
+                    // Set the modal image source and title
+                    modalImage.src = this.src;
+                    modalTitle.textContent = this.alt || 'Announcement Image';
+                    
+                    // Show the modal
+                    imageModal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+                });
+            });
+            
+            // Close modal when clicking the close button
+            closeModal.addEventListener('click', function() {
+                imageModal.classList.add('hidden');
+                document.body.style.overflow = ''; // Restore scrolling
+            });
+            
+            // Close modal when clicking outside the image
+            imageModal.addEventListener('click', function(event) {
+                if (event.target === imageModal) {
+                    imageModal.classList.add('hidden');
+                    document.body.style.overflow = ''; // Restore scrolling
+                }
+            });
+            
+            // Close modal when pressing Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && !imageModal.classList.contains('hidden')) {
+                    imageModal.classList.add('hidden');
+                    document.body.style.overflow = ''; // Restore scrolling
+                }
+            });
+        });
+    </script>
 </x-app-layout>
